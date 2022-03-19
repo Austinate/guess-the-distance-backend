@@ -29,4 +29,14 @@ export class City {
   @Property({ type: types.float })
   @IsLongitude()
   longitude: number;
+
+  @Property({ type: types.datetime })
+  createdAt = new Date();
+
+  @Property({
+    type: types.datetime,
+    nullable: true,
+    onUpdate: () => new Date(),
+  })
+  updatedAt?: Date;
 }

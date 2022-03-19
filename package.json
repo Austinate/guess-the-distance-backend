@@ -19,10 +19,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "schema:create": "yarn build && MIKRO_ORM_ENV=.development.env yarn mikro-orm schema:create --run",
-    "schema:update": "yarn build && MIKRO_ORM_ENV=.development.env yarn mikro-orm schema:update --run",
-    "schema:drop": "yarn build && MIKRO_ORM_ENV=.development.env yarn mikro-orm schema:drop --run",
-    "migration:run:dev": "yarn build && MIKRO_ORM_ENV=.development.env yarn mikro-orm migration:up"
+    "schema:create": "MIKRO_ORM_ENV=.development.env yarn mikro-orm schema:create --run",
+    "schema:update": "MIKRO_ORM_ENV=.development.env yarn mikro-orm schema:update --run",
+    "schema:drop": "MIKRO_ORM_ENV=.development.env yarn mikro-orm schema:drop --run",
+    "migration:run:dev": "MIKRO_ORM_ENV=.development.env yarn mikro-orm migration:up",
+    "migration:fresh:dev": "MIKRO_ORM_ENV=.development.env yarn mikro-orm migration:fresh"
   },
   "mikro-orm": {
     "useTsNode": true,
