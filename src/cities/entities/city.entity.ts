@@ -1,5 +1,11 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
-import { IsLatitude, IsLongitude, IsNotEmpty, IsUUID } from 'class-validator';
+import { Entity, PrimaryKey, Property, types } from '@mikro-orm/core';
+import {
+  IsLatitude,
+  IsLongitude,
+  IsNotEmpty,
+  IsUUID,
+  Length,
+} from 'class-validator';
 
 @Entity()
 export class City {
@@ -12,10 +18,15 @@ export class City {
   name: string;
 
   @Property()
+  @IsNotEmpty()
+  @Length(3, 255)
+  country: string;
+
+  @Property({ type: types.float })
   @IsLatitude()
   latitude: number;
 
-  @Property()
+  @Property({ type: types.float })
   @IsLongitude()
   longitude: number;
 }
