@@ -30,12 +30,13 @@ export class City {
   @IsLongitude()
   longitude: number;
 
-  @Property({ type: types.datetime })
+  @Property({ type: types.datetime, hidden: true })
   createdAt = new Date();
 
   @Property({
     type: types.datetime,
     nullable: true,
+    hidden: true,
     onUpdate: () => new Date(),
   })
   updatedAt?: Date;
