@@ -1,3 +1,4 @@
+import { QueryOrder } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
@@ -20,6 +21,10 @@ export class CitiesService {
 
   async findAll() {
     return await this.citiesRepository.findAll();
+  }
+
+  async findByName(name: string) {
+    return await this.citiesRepository.findOne({ name: name });
   }
 
   findOne(id: number) {

@@ -8,9 +8,11 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
+  Query,
 } from '@nestjs/common';
 import { CitiesService } from './cities.service';
 import { CreateCityDto } from './dto/create-city.dto';
+import { FindCityDto } from './dto/find-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
 
 @Controller('cities')
@@ -26,6 +28,11 @@ export class CitiesController {
   @Get()
   findAll() {
     return this.citiesService.findAll();
+  }
+
+  @Get('find')
+  find(@Query() query: FindCityDto) {
+    return this.citiesService.findByName(query.name);
   }
 
   @Get(':id')
