@@ -32,7 +32,11 @@ export class CitiesController {
 
   @Get('find')
   find(@Query() query: FindCityDto) {
-    return this.citiesService.findByName(query.name);
+    return this.citiesService.findByName(
+      query.name,
+      query.limit,
+      query.offset ?? 0,
+    );
   }
 
   @Get(':id')

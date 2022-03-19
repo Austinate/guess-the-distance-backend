@@ -23,8 +23,13 @@ export class CitiesService {
     return await this.citiesRepository.findAll();
   }
 
-  async findByName(name: string) {
-    return await this.citiesRepository.findOne({ name: name });
+  async findByName(name: string, limit: number, offset: number) {
+    return await this.citiesRepository.find(
+      {
+        name: { $like: `${name}%` },
+      },
+      { orderBy: { name: QueryOrder.ASC }, limit: limit, offset: offset },
+    );
   }
 
   findOne(id: number) {
