@@ -1,4 +1,5 @@
 import { Entity, PrimaryKey, Property, types } from '@mikro-orm/core';
+import { v4 as uuid } from 'uuid';
 import {
   IsLatitude,
   IsLongitude,
@@ -40,4 +41,17 @@ export class City {
     onUpdate: () => new Date(),
   })
   updatedAt?: Date;
+
+  constructor(
+    name: string,
+    country: string,
+    latitude: number,
+    longitude: number,
+  ) {
+    this.id = uuid();
+    this.name = name;
+    this.country = country;
+    this.latitude = latitude;
+    this.longitude = longitude;
+  }
 }
