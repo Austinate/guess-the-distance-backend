@@ -105,7 +105,7 @@ describe('CitiesService', () => {
       expect(repositoryMock.findOne).toBeCalledWith({ id: result.id });
     });
 
-    it('throws NotFoundException if city is missing', async () => {
+    it('should throw NotFoundException if city is missing', async () => {
       const id = uuid();
       repositoryMock.findOne.mockResolvedValueOnce(null);
 
@@ -116,7 +116,7 @@ describe('CitiesService', () => {
   });
 
   describe('update', () => {
-    it('throws NotFoundException if city is missing', async () => {
+    it('should throw NotFoundException if city is missing', async () => {
       const id = uuid();
       const dto: UpdateCityDto = {};
       repositoryMock.findOne.mockReturnValueOnce(null);
@@ -125,7 +125,7 @@ describe('CitiesService', () => {
     });
   });
 
-  it('returns updated city', async () => {
+  it('should return updated city', async () => {
     const dto: UpdateCityDto = {
       name: 'Kyiv',
       country: 'Ukraine',

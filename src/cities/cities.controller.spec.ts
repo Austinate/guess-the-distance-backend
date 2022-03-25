@@ -35,7 +35,7 @@ describe('CitiesController', () => {
     });
   });
 
-  describe('POST city', () => {
+  describe('create', () => {
     describe('when validation passes', () => {
       it('should create and return new city', async () => {
         const dto = new CreateCityDto();
@@ -56,27 +56,22 @@ describe('CitiesController', () => {
         expect(serviceMock.create).toBeCalledTimes(1);
       });
     });
+  });
 
-    describe('update', () => {
-      it('returns an updated city', async () => {
-        const dto = new CreateCityDto();
-        dto.name = 'Kyiv';
-        dto.country = 'Ukraine';
-        dto.latitude = 50.45;
-        dto.longitude = 30.5236;
+  describe('update', () => {
+    it('should return an updated city', async () => {
+      const dto = new CreateCityDto();
+      dto.name = 'Kyiv';
+      dto.country = 'Ukraine';
+      dto.latitude = 50.45;
+      dto.longitude = 30.5236;
 
-        const city = new City(
-          dto.name,
-          dto.country,
-          dto.latitude,
-          dto.longitude,
-        );
-        serviceMock.update.mockResolvedValueOnce(city);
+      const city = new City(dto.name, dto.country, dto.latitude, dto.longitude);
+      serviceMock.update.mockResolvedValueOnce(city);
 
-        expect(await controller.update(city.id, dto)).toBe(city);
-        expect(serviceMock.update).toBeCalledWith(city.id, dto);
-        expect(serviceMock.update).toBeCalledTimes(1);
-      });
+      expect(await controller.update(city.id, dto)).toBe(city);
+      expect(serviceMock.update).toBeCalledWith(city.id, dto);
+      expect(serviceMock.update).toBeCalledTimes(1);
     });
   });
 });
