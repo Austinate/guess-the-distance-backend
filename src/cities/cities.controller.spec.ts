@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { createMock } from '@golevelup/ts-jest';
 import { CitiesController } from './cities.controller';
 import { CitiesService } from './cities.service';
 
@@ -8,7 +9,9 @@ describe('CitiesController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CitiesController],
-      providers: [CitiesService],
+      providers: [
+        { provide: CitiesService, useValue: createMock<CitiesService>() },
+      ],
     }).compile();
 
     controller = module.get<CitiesController>(CitiesController);
