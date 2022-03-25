@@ -8,6 +8,7 @@ import { NotFoundException } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import { CreateCityDto } from './dto/create-city.dto';
 import { FindCityDto } from './dto/find-city.dto';
+import { UpdateCityDto } from './dto/update-city.dto';
 
 describe('CitiesService', () => {
   let service: CitiesService;
@@ -104,12 +105,40 @@ describe('CitiesService', () => {
       expect(repositoryMock.findOne).toBeCalledWith({ id: result.id });
     });
 
-    it('should throw NotFoundException if city is missing', async () => {
+    it('throws NotFoundException if city is missing', async () => {
       const id = uuid();
       repositoryMock.findOne.mockResolvedValueOnce(null);
 
       expect(service.findOne(id)).rejects.toThrow(NotFoundException);
+      expect(repositoryMock.findOne).toBeCalledWith({ id: id });
       expect(repositoryMock.findOne).toBeCalledTimes(1);
     });
+  });
+
+  describe('update', () => {
+    it('throws NotFoundException if city is missing', async () => {
+      const id = uuid();
+      const dto: UpdateCityDto = {};
+      repositoryMock.findOne.mockReturnValueOnce(null);
+
+      expect(service.update(id, dto)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  it('returns updated city', async () => {
+    const dto: UpdateCityDto = {
+      name: 'Kyiv',
+      country: 'Ukraine',
+      latitude: 50.45,
+      longitude: 30.5236,
+    };
+    const city = new City(dto.name, dto.country, dto.latitude, dto.longitude);
+    repositoryMock.findOne.mockResolvedValueOnce(city);
+
+    expect(await service.update(city.id, dto)).toBe(city);
+    expect(repositoryMock.findOne).toBeCalledWith({ id: city.id });
+    expect(repositoryMock.findOne).toHaveBeenCalledTimes(1);
+    expect(repositoryMock.persistAndFlush).toBeCalledWith(city);
+    expect(repositoryMock.persistAndFlush).toBeCalledTimes(1);
   });
 });
