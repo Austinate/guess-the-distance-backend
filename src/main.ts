@@ -1,12 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { UnhandledErrorsLoggingInterceptor } from './interceptors/unhandled-errors-logging.interceptor';
 import { MainLogger } from './logging/main.logger';
 
 async function bootstrap() {
+  const logger = new MainLogger();
   const app = await NestFactory.create(AppModule, {
-    logger: new MainLogger(),
+    logger: logger,
   });
+
+  app.useGlobalInterceptors(new UnhandledErrorsLoggingInterceptor(logger));
 
   // Starts listening for shutdown hooks
   // per https://mikro-orm.io/docs/usage-with-nestjs#app-shutdown-and-cleanup
