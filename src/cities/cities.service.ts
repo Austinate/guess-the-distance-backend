@@ -15,7 +15,7 @@ export class CitiesService {
 
   async create(createCityDto: CreateCityDto) {
     const city = await this.citiesRepository.create(createCityDto);
-    await this.citiesRepository.persist(city).flush();
+    await this.citiesRepository.persistAndFlush(city);
     return city;
   }
 
