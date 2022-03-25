@@ -1,9 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { MainLogger } from './logging/main.logger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: new MainLogger(),
+  });
 
   // Starts listening for shutdown hooks
   // per https://mikro-orm.io/docs/usage-with-nestjs#app-shutdown-and-cleanup
