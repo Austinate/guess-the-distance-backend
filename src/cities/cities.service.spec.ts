@@ -1,12 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { createMock, DeepMocked } from '@golevelup/ts-jest';
 import { CitiesService } from './cities.service';
-import { EntityRepository } from '@mikro-orm/core';
+import { EntityRepository, QueryOrder } from '@mikro-orm/core';
 import { City } from './entities/city.entity';
 import { getRepositoryToken } from '@mikro-orm/nestjs';
 import { NotFoundException } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import { CreateCityDto } from './dto/create-city.dto';
+import { FindCityDto } from './dto/find-city.dto';
 
 describe('CitiesService', () => {
   let service: CitiesService;
@@ -64,24 +65,51 @@ describe('CitiesService', () => {
       expect(await service.findAll()).toBe(result);
       expect(repositoryMock.findAll).toBeCalledTimes(1);
     });
+  });
 
-    describe('findOne', () => {
-      it('should return a city if it exists', async () => {
-        const result = new City('Kyiv', 'Ukraine', 50.45, 30.5236);
-        repositoryMock.findOne.mockResolvedValueOnce(result);
+  describe('findByName', () => {
+    it('should return an array of cities', async () => {
+      const query: FindCityDto = { name: 'Kyiv', limit: 3 };
+      const result = [
+        new City('Kyiv', 'Ukraine', 50.45, 30.5236),
+        new City('Kharkiv', 'Ukraine', 50, 36.2292),
+        new City('Lviv', 'Ukraine', 49.8419, 24.0315),
+      ];
+      const offset = 0;
 
-        expect(await service.findOne(result.id)).toBe(result);
-        expect(repositoryMock.findOne).toBeCalledTimes(1);
-        expect(repositoryMock.findOne).toBeCalledWith({ id: result.id });
-      });
+      repositoryMock.find.mockResolvedValueOnce(result);
 
-      it('should throw NotFoundException if city is missing', async () => {
-        const id = uuid();
-        repositoryMock.findOne.mockResolvedValueOnce(null);
+      expect(await service.findByName(query.name, query.limit, offset)).toBe(
+        result,
+      );
+      expect(repositoryMock.find).toBeCalledWith(
+        { name: { $like: `${query.name}%` } },
+        {
+          limit: query.limit,
+          offset: offset,
+          orderBy: { name: QueryOrder.ASC },
+        },
+      );
+      expect(repositoryMock.find).toBeCalledTimes(1);
+    });
+  });
 
-        expect(service.findOne(id)).rejects.toThrow(NotFoundException);
-        expect(repositoryMock.findOne).toBeCalledTimes(1);
-      });
+  describe('findOne', () => {
+    it('should return a city if it exists', async () => {
+      const result = new City('Kyiv', 'Ukraine', 50.45, 30.5236);
+      repositoryMock.findOne.mockResolvedValueOnce(result);
+
+      expect(await service.findOne(result.id)).toBe(result);
+      expect(repositoryMock.findOne).toBeCalledTimes(1);
+      expect(repositoryMock.findOne).toBeCalledWith({ id: result.id });
+    });
+
+    it('should throw NotFoundException if city is missing', async () => {
+      const id = uuid();
+      repositoryMock.findOne.mockResolvedValueOnce(null);
+
+      expect(service.findOne(id)).rejects.toThrow(NotFoundException);
+      expect(repositoryMock.findOne).toBeCalledTimes(1);
     });
   });
 });
