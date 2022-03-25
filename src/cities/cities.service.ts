@@ -1,7 +1,7 @@
 import { QueryOrder } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
 import { City } from './entities/city.entity';
@@ -32,8 +32,13 @@ export class CitiesService {
     );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} city`;
+  async findOne(id: string) {
+    const city = await this.citiesRepository.findOne({ id: id });
+    if (city) {
+      return city;
+    } else {
+      throw new NotFoundException(`City with id ${id} does not exist`);
+    }
   }
 
   update(id: number, updateCityDto: UpdateCityDto) {
