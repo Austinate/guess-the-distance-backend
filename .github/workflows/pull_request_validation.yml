@@ -1,0 +1,37 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+    pull_request:
+        branches:
+            - master
+            - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js version from '.nvmrc'
+      uses: actions/setup-node@v3
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'yarn'
+    - run: yarn install  --frozen-lockfile
+    - run: yarn build
+    - run: yarn lint:report
+      continue-on-error: true
+      # Coverage report
+    - name: Publish coverage Report
+      uses: ArtiomTr/jest-coverage-report-action@v2
+      with:
+        package-manager: yarn
+        test-script: yarn test
+        skip-step: install # dependencies install is performed by previous step
+        # Danger
+    - name: Danger 
+      run: yarn danger ci
+      env: 
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
