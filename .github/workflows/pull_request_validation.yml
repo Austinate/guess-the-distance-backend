@@ -24,11 +24,12 @@ jobs:
     - run: yarn install  --frozen-lockfile
     - run: yarn build
 
+# Report coverage
     - uses: ArtiomTr/jest-coverage-report-action@v2
       with:
-        test-script: yarn test:ci
         package-manager: yarn
-        skip-step: install # dependencies are installed in previous step
+        test-script: yarn test
+        skip-step: install # dependencies install is performed by previous step
 
     - name: Danger
       run: yarn danger ci
