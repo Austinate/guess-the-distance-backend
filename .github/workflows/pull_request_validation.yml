@@ -11,9 +11,7 @@ on:
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js version from '.nvmrc'
@@ -23,15 +21,17 @@ jobs:
         cache: 'yarn'
     - run: yarn install  --frozen-lockfile
     - run: yarn build
-
-# Report coverage
-    - uses: ArtiomTr/jest-coverage-report-action@v2
+    - run: yarn lint:report
+      continue-on-error: true
+      # Coverage report
+    - name: Publish coverage Report
+      uses: ArtiomTr/jest-coverage-report-action@v2
       with:
         package-manager: yarn
         test-script: yarn test
         skip-step: install # dependencies install is performed by previous step
-
-    - name: Danger
+        # Danger
+    - name: Danger 
       run: yarn danger ci
       env: 
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
