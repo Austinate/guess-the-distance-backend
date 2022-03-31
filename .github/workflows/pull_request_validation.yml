@@ -23,7 +23,10 @@ jobs:
         cache: 'yarn'
     - run: yarn install  --frozen-lockfile
     - run: yarn build
-    - run: yarn test
+
+    - uses: ArtiomTr/jest-coverage-report-action@v2
+      with:
+        package-manager: yarn
 
     - name: Danger
       run: yarn danger ci
