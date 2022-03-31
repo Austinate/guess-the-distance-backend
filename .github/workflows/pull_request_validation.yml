@@ -26,7 +26,9 @@ jobs:
 
     - uses: ArtiomTr/jest-coverage-report-action@v2
       with:
+        test-script: yarn test:ci
         package-manager: yarn
+        skip-step: install # dependencies are installed in previous step
 
     - name: Danger
       run: yarn danger ci
