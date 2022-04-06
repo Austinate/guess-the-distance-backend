@@ -23,18 +23,6 @@ describe('CitiesController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('findAll', () => {
-    it('should return an array of cities', async () => {
-      const cities = [
-        new City('Kyiv', 'Ukraine', 50.45, 30.5236),
-        new City('Kharkiv', 'Ukraine', 50, 36.2292),
-      ];
-      serviceMock.findAll.mockReturnValueOnce(Promise.resolve(cities));
-      expect(await controller.findAll()).toBe(cities);
-      expect(serviceMock.findAll).toBeCalledTimes(1);
-    });
-  });
-
   describe('create', () => {
     describe('when validation passes', () => {
       it('should create and return new city', async () => {

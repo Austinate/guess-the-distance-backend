@@ -3,10 +3,11 @@ import { Type } from 'class-transformer';
 import { IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class FindCityDto {
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ description: 'Matches city name by prefix' })
-  name: string;
+  @ApiPropertyOptional({ description: 'Matches city name by prefix' })
+  name?: string;
 
   // Use @Type since  IsNumberString doesn't allow to use number validation
   @Type(() => Number)
@@ -17,8 +18,7 @@ export class FindCityDto {
 
   // Use @Type since  IsNumberString doesn't allow to use number validation
   @Type(() => Number)
-  @Min(1)
-  @IsOptional()
-  @ApiPropertyOptional({ minimum: 1 })
-  offset?: number;
+  @Min(0)
+  @ApiProperty({ minimum: 0 })
+  offset: number;
 }

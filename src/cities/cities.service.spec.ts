@@ -55,39 +55,29 @@ describe('CitiesService', () => {
     });
   });
 
-  describe('findAll', () => {
-    it('should return an array of cities', async () => {
-      const result = [
-        new City('Kyiv', 'Ukraine', 50.45, 30.5236),
-        new City('Kharkiv', 'Ukraine', 50, 36.2292),
-      ];
-      repositoryMock.findAll.mockResolvedValueOnce(result);
-
-      expect(await service.findAll()).toBe(result);
-      expect(repositoryMock.findAll).toBeCalledTimes(1);
-    });
-  });
-
   describe('findByName', () => {
     it('should return an array of cities', async () => {
-      const query: FindCityDto = { name: 'Kyiv', limit: 3 };
+      const query: FindCityDto = {
+        name: 'Kyiv',
+        limit: 3,
+        offset: 1,
+      };
       const result = [
         new City('Kyiv', 'Ukraine', 50.45, 30.5236),
         new City('Kharkiv', 'Ukraine', 50, 36.2292),
         new City('Lviv', 'Ukraine', 49.8419, 24.0315),
       ];
-      const offset = 0;
 
       repositoryMock.find.mockResolvedValueOnce(result);
 
-      expect(await service.findByName(query.name, query.limit, offset)).toBe(
-        result,
-      );
+      expect(
+        await service.findByName(query.limit, query.offset, query.name),
+      ).toBe(result);
       expect(repositoryMock.find).toBeCalledWith(
         { name: { $like: `${query.name}%` } },
         {
           limit: query.limit,
-          offset: offset,
+          offset: query.offset * query.limit,
           orderBy: { name: QueryOrder.ASC },
         },
       );
@@ -123,22 +113,22 @@ describe('CitiesService', () => {
 
       expect(service.update(id, dto)).rejects.toThrow(NotFoundException);
     });
-  });
 
-  it('should return updated city', async () => {
-    const dto: UpdateCityDto = {
-      name: 'Kyiv',
-      country: 'Ukraine',
-      latitude: 50.45,
-      longitude: 30.5236,
-    };
-    const city = new City(dto.name, dto.country, dto.latitude, dto.longitude);
-    repositoryMock.findOne.mockResolvedValueOnce(city);
+    it('should return updated city', async () => {
+      const dto: UpdateCityDto = {
+        name: 'Kyiv',
+        country: 'Ukraine',
+        latitude: 50.45,
+        longitude: 30.5236,
+      };
+      const city = new City(dto.name, dto.country, dto.latitude, dto.longitude);
+      repositoryMock.findOne.mockResolvedValueOnce(city);
 
-    expect(await service.update(city.id, dto)).toBe(city);
-    expect(repositoryMock.findOne).toBeCalledWith({ id: city.id });
-    expect(repositoryMock.findOne).toHaveBeenCalledTimes(1);
-    expect(repositoryMock.persistAndFlush).toBeCalledWith(city);
-    expect(repositoryMock.persistAndFlush).toBeCalledTimes(1);
+      expect(await service.update(city.id, dto)).toBe(city);
+      expect(repositoryMock.findOne).toBeCalledWith({ id: city.id });
+      expect(repositoryMock.findOne).toHaveBeenCalledTimes(1);
+      expect(repositoryMock.persistAndFlush).toBeCalledWith(city);
+      expect(repositoryMock.persistAndFlush).toBeCalledTimes(1);
+    });
   });
 });

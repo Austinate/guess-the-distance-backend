@@ -1,4 +1,4 @@
-import { QueryOrder } from '@mikro-orm/core';
+import { FindOptions, QueryOrder } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable, NotFoundException } from '@nestjs/common';
@@ -19,17 +19,22 @@ export class CitiesService {
     return city;
   }
 
-  async findAll() {
-    return await this.citiesRepository.findAll();
-  }
-
-  async findByName(name: string, limit: number, offset: number) {
-    return await this.citiesRepository.find(
-      {
-        name: { $like: `${name}%` },
-      },
-      { orderBy: { name: QueryOrder.ASC }, limit: limit, offset: offset },
-    );
+  async findByName(limit: number, offset: number, name?: string) {
+    const options: FindOptions<City, never> = {
+      orderBy: { name: QueryOrder.ASC },
+      limit: limit,
+      offset: offset * limit,
+    };
+    if (name) {
+      return await this.citiesRepository.find(
+        {
+          name: { $like: `${name}%` },
+        },
+        options,
+      );
+    } else {
+      return await this.citiesRepository.findAll(options);
+    }
   }
 
   async findOne(id: string) {
