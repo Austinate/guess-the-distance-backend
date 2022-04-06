@@ -26,18 +26,9 @@ export class CitiesController {
     return this.citiesService.create(createCityDto);
   }
 
-  @Get()
-  findAll() {
-    return this.citiesService.findAll();
-  }
-
   @Get('find')
   find(@Query() query: FindCityDto) {
-    return this.citiesService.findByName(
-      query.name,
-      query.limit,
-      query.offset ?? 0,
-    );
+    return this.citiesService.findByName(query.limit, query.offset, query.name);
   }
 
   @Get(':id')
