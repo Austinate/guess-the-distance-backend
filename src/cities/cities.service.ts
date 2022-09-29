@@ -5,6 +5,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
 import { City } from './entities/city.entity';
+import * as haversine from 'haversine';
 
 @Injectable()
 export class CitiesService {
@@ -55,5 +56,33 @@ export class CitiesService {
 
   remove(id: number) {
     return `This action removes a #${id} city`;
+  }
+
+  async distance(from: string, to: string) {
+    if (from === to) {
+      return { distance: 0 };
+    }
+
+    const cities = await this.citiesRepository.find([from, to]);
+    if (cities.length != 2) {
+      const missing_ids = [from, to].filter((id) => {
+        return !cities.some((city) => city.id === id);
+      });
+      throw new NotFoundException(
+        `Cities with id's ${missing_ids} do not exist`,
+      );
+    }
+
+    const from_city = cities[0];
+    const to_city = cities[1];
+    const distance = haversine(
+      [from_city.latitude, from_city.longitude],
+      [to_city.latitude, to_city.longitude],
+      { format: '[lat,lon]' },
+    );
+
+    // Number->String->Number conversion is redundant, update to something more efficient
+    const rounded = parseFloat(distance.toFixed(2));
+    return { distance: rounded };
   }
 }
