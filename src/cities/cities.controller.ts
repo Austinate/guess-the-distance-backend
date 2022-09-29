@@ -12,6 +12,7 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { CitiesService } from './cities.service';
+import { CitiesDistanceDto } from './dto/cities-distance.dto';
 import { CreateCityDto } from './dto/create-city.dto';
 import { FindCityDto } from './dto/find-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
@@ -29,6 +30,11 @@ export class CitiesController {
   @Get('find')
   find(@Query() query: FindCityDto) {
     return this.citiesService.findByName(query.limit, query.offset, query.name);
+  }
+
+  @Get('distance')
+  distance(@Query() query: CitiesDistanceDto) {
+    return this.citiesService.distance(query.from_id, query.to_id);
   }
 
   @Get(':id')

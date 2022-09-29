@@ -4,6 +4,7 @@ import { CitiesController } from './cities.controller';
 import { CitiesService } from './cities.service';
 import { City } from './entities/city.entity';
 import { CreateCityDto } from './dto/create-city.dto';
+import { v4 as uuid } from 'uuid';
 
 describe('CitiesController', () => {
   let controller: CitiesController;
@@ -60,6 +61,22 @@ describe('CitiesController', () => {
       expect(await controller.update(city.id, dto)).toBe(city);
       expect(serviceMock.update).toBeCalledWith(city.id, dto);
       expect(serviceMock.update).toBeCalledTimes(1);
+    });
+  });
+
+  describe('distance', () => {
+    it('should return a distance between 2 existing cities', async () => {
+      const from = uuid();
+      const to = uuid();
+      const result = { distance: 408.63 };
+
+      serviceMock.distance.mockResolvedValueOnce(result);
+
+      expect(await controller.distance({ from_id: from, to_id: to })).toBe(
+        result,
+      );
+      expect(serviceMock.distance).toBeCalledWith(from, to);
+      expect(serviceMock.distance).toBeCalledTimes(1);
     });
   });
 });

@@ -131,4 +131,38 @@ describe('CitiesService', () => {
       expect(repositoryMock.persistAndFlush).toBeCalledTimes(1);
     });
   });
+
+  describe('distance', () => {
+    it('should throw NotFoundException if any of cities is missing', async () => {
+      const dto: UpdateCityDto = {
+        name: 'Kyiv',
+        country: 'Ukraine',
+        latitude: 50.45,
+        longitude: 30.5236,
+      };
+      const from = new City(dto.name, dto.country, dto.latitude, dto.longitude);
+      const to = uuid();
+      repositoryMock.find.mockResolvedValueOnce([from]);
+
+      expect(service.distance(from.id, to)).rejects.toThrow(NotFoundException);
+      expect(repositoryMock.find).toBeCalledWith([from.id, to]);
+      expect(repositoryMock.find).toBeCalledTimes(1);
+    });
+
+    it('should return 0 for cities with same id', async () => {
+      const id = uuid();
+
+      expect(await service.distance(id, id)).toEqual({ distance: 0 });
+    });
+
+    it('should return correct distance between 2 existing cities', async () => {
+      const from = new City('Kyiv', 'Ukraine', 50.45, 30.5236);
+      const to = new City('Kharkiv', 'Ukraine', 50, 36.2292);
+      repositoryMock.find.mockResolvedValueOnce([from, to]);
+
+      expect(await service.distance(from.id, to.id)).toEqual({
+        distance: 408.86,
+      });
+    });
+  });
 });
