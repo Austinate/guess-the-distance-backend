@@ -9,6 +9,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { UserRole } from './common/user.role';
+import { FilterQuery } from '@mikro-orm/core';
 
 @Injectable()
 export class UsersService {
@@ -39,12 +40,21 @@ export class UsersService {
     return createdUser;
   }
 
-  async findOne(id: string) {
-    const user = await this.usersRepository.findOne({ id: id });
+  async findOne(filterQuery: FilterQuery<User>) {
+    const user = await this.usersRepository.findOne(filterQuery);
     if (user) {
       return user;
     } else {
-      throw new NotFoundException(`User with id ${id} does not exist`);
+      throw new NotFoundException(
+        `User matching ${filterQuery} does not exist`,
+      );
     }
+  }
+  async findOneById(id: string) {
+    return this.findOne({ id: id });
+  }
+
+  async findOneByUsername(username: string) {
+    return this.findOne({ username: username });
   }
 }

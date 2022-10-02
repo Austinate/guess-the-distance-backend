@@ -71,7 +71,7 @@ describe('UsersService', () => {
     it('should return a user if it exists', async () => {
       const result = new User('test_user', UserRole.User, 'password');
       repositoryMock.findOne.mockResolvedValueOnce(result);
-      expect(await service.findOne(result.id)).toBe(result);
+      expect(await service.findOne({ id: result.id })).toBe(result);
       expect(repositoryMock.findOne).toBeCalledTimes(1);
       expect(repositoryMock.findOne).toBeCalledWith({ id: result.id });
     });
@@ -79,8 +79,48 @@ describe('UsersService', () => {
     it('should throw NotFoundException if user is missing', async () => {
       const id = uuid();
       repositoryMock.findOne.mockResolvedValueOnce(null);
-      expect(service.findOne(id)).rejects.toThrow(NotFoundException);
+      expect(service.findOne({ id: id })).rejects.toThrow(NotFoundException);
       expect(repositoryMock.findOne).toBeCalledWith({ id: id });
+      expect(repositoryMock.findOne).toBeCalledTimes(1);
+    });
+  });
+
+  describe('findOneById', () => {
+    it('should return a user if it exists', async () => {
+      const result = new User('test_user', UserRole.User, 'password');
+      repositoryMock.findOne.mockResolvedValueOnce(result);
+      expect(await service.findOneById(result.id)).toBe(result);
+      expect(repositoryMock.findOne).toBeCalledTimes(1);
+      expect(repositoryMock.findOne).toBeCalledWith({ id: result.id });
+    });
+
+    it('should throw NotFoundException if user is missing', async () => {
+      const id = uuid();
+      repositoryMock.findOne.mockResolvedValueOnce(null);
+      expect(service.findOneById(id)).rejects.toThrow(NotFoundException);
+      expect(repositoryMock.findOne).toBeCalledWith({ id: id });
+      expect(repositoryMock.findOne).toBeCalledTimes(1);
+    });
+  });
+
+  describe('findOneByUsername', () => {
+    it('should return a user if it exists', async () => {
+      const result = new User('test_user', UserRole.User, 'password');
+      repositoryMock.findOne.mockResolvedValueOnce(result);
+      expect(await service.findOneByUsername(result.username)).toBe(result);
+      expect(repositoryMock.findOne).toBeCalledTimes(1);
+      expect(repositoryMock.findOne).toBeCalledWith({
+        username: result.username,
+      });
+    });
+
+    it('should throw NotFoundException if user is missing', async () => {
+      const username = 'non-existing';
+      repositoryMock.findOne.mockResolvedValueOnce(null);
+      expect(service.findOneByUsername(username)).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(repositoryMock.findOne).toBeCalledWith({ username: username });
       expect(repositoryMock.findOne).toBeCalledTimes(1);
     });
   });
