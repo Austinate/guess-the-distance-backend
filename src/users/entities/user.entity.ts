@@ -15,17 +15,17 @@ import { v4 as uuid } from 'uuid';
 export class User {
   @PrimaryKey({ type: 'uuid', defaultRaw: 'uuid_generate_v4()' })
   @IsUUID()
-  id: string;
+  readonly id: string;
 
   @Property()
-  username: string;
+  readonly username: string;
 
   @Property()
   @Enum({ default: [UserRole.User] })
-  role: UserRole;
+  readonly role: UserRole;
 
   @Property({ type: types.datetime, hidden: true })
-  createdAt = new Date();
+  readonly createdAt = new Date();
 
   @Property({
     type: types.datetime,
@@ -33,7 +33,7 @@ export class User {
     hidden: true,
     onUpdate: () => new Date(),
   })
-  updatedAt?: Date;
+  readonly updatedAt?: Date;
 
   constructor(username: string, role: UserRole) {
     this.id = uuid();
