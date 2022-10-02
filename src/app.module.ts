@@ -5,12 +5,14 @@ import { ConfigModule } from '@nestjs/config';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { CitiesModule } from './cities/cities.module';
 import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.development.env', isGlobal: true }),
     MikroOrmModule.forRoot(),
     CitiesModule,
     AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
