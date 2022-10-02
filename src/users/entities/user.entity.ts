@@ -21,6 +21,9 @@ export class User {
   readonly username: string;
 
   @Property()
+  readonly passwordHash: string;
+
+  @Property()
   @Enum({ default: [UserRole.User] })
   readonly role: UserRole;
 
@@ -35,9 +38,10 @@ export class User {
   })
   readonly updatedAt?: Date;
 
-  constructor(username: string, role: UserRole) {
+  constructor(username: string, role: UserRole, passwordHash: string) {
     this.id = uuid();
     this.username = username;
+    this.passwordHash = passwordHash;
     this.role = role;
   }
 }

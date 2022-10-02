@@ -6,7 +6,8 @@ import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { v4 as uuid } from 'uuid';
 import { UserRole } from './common/user.role';
-import { NotFoundException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -31,9 +32,44 @@ describe('UsersService', () => {
     expect(service).toBeDefined();
   });
 
+  describe('create', () => {
+    const dto = new CreateUserDto();
+    dto.username = 'test_user';
+    dto.password = 'password';
+
+    it('should throw ConflictException if user already exists', async () => {
+      const existingUser = new User('test_user', UserRole.User, 'password');
+      repositoryMock.findOne.mockResolvedValueOnce(existingUser);
+
+      expect(service.create(dto)).rejects.toThrowError(ConflictException);
+      expect(repositoryMock.findOne).toBeCalledTimes(1);
+      expect(repositoryMock.findOne).toBeCalledWith({ username: dto.username });
+    });
+
+    it('should create and return new user with valid data', async () => {
+      const createQueryArguments = {
+        username: dto.username,
+        role: UserRole.User,
+        passwordHash: expect.anything(),
+      };
+
+      let result: User;
+      repositoryMock.create.mockImplementationOnce((fields) => {
+        result = new User(fields.username, fields.role, fields.passwordHash);
+        expect(fields.passwordHash).not.toEqual(dto.password);
+        return result;
+      });
+
+      repositoryMock.findOne.mockResolvedValueOnce(null);
+      expect(await service.create(dto)).toBe(result);
+      expect(repositoryMock.create).toBeCalledWith(createQueryArguments);
+      expect(repositoryMock.create).toBeCalledTimes(1);
+    });
+  });
+
   describe('findOne', () => {
     it('should return a user if it exists', async () => {
-      const result = new User('test_user', UserRole.User);
+      const result = new User('test_user', UserRole.User, 'password');
       repositoryMock.findOne.mockResolvedValueOnce(result);
       expect(await service.findOne(result.id)).toBe(result);
       expect(repositoryMock.findOne).toBeCalledTimes(1);
