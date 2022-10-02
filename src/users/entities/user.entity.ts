@@ -8,6 +8,7 @@ import {
 } from '@mikro-orm/core';
 import { IsUUID } from 'class-validator';
 import { UserRole } from '../common/user.role';
+import { v4 as uuid } from 'uuid';
 
 @Entity()
 @Unique({ properties: ['username'] })
@@ -33,4 +34,10 @@ export class User {
     onUpdate: () => new Date(),
   })
   updatedAt?: Date;
+
+  constructor(username: string, role: UserRole) {
+    this.id = uuid();
+    this.username = username;
+    this.role = role;
+  }
 }
