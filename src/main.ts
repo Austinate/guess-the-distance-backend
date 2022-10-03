@@ -9,6 +9,7 @@ async function bootstrap() {
   const logger = new MainLogger();
   const app = await NestFactory.create(AppModule, {
     logger: logger,
+    cors: true,
   });
 
   app.useGlobalInterceptors(
