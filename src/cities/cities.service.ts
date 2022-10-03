@@ -29,7 +29,7 @@ export class CitiesService {
     if (name) {
       return await this.citiesRepository.find(
         {
-          name: { $like: `${name}%` },
+          name: { $ilike: `${name}%` },
         },
         options,
       );
