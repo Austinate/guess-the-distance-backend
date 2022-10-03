@@ -21,6 +21,10 @@ async function bootstrap() {
   app.enableShutdownHooks();
 
   const config = new DocumentBuilder()
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'JWT',
+    )
     .setTitle('Guess The Distance')
     .setDescription('Guess The Distance API description')
     .setVersion('1.0')
