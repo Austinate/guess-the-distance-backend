@@ -39,7 +39,7 @@ describe('UsersService', () => {
     dto.password = 'password';
 
     it('should throw ConflictException if user already exists', async () => {
-      const existingUser = new User('test_user', UserRole.User, 'password');
+      const existingUser = new User(dto.username, UserRole.User, dto.password);
       repositoryMock.findOne.mockResolvedValueOnce(existingUser);
 
       expect(service.create(dto)).rejects.toThrowError(ConflictException);

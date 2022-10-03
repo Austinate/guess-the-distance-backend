@@ -15,10 +15,6 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe(
-        'Hello, it is `Guess The Distance` project',
-      );
-    });
+    it('should return "Hello World!"', () => {});
   });
 });

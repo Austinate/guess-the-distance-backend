@@ -20,10 +20,10 @@ export class User {
   @Property()
   readonly username: string;
 
-  @Property()
+  @Property({ hidden: true })
   readonly passwordHash: string;
 
-  @Property()
+  @Property({ hidden: true })
   @Enum({ default: [UserRole.User] })
   readonly role: UserRole;
 

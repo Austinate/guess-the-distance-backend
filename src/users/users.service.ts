@@ -46,7 +46,7 @@ export class UsersService {
       return user;
     } else {
       throw new NotFoundException(
-        `User matching ${filterQuery} does not exist`,
+        `User matching ${JSON.stringify(filterQuery)} does not exist`,
       );
     }
   }
