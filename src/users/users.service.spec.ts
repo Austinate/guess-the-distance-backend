@@ -8,6 +8,7 @@ import { v4 as uuid } from 'uuid';
 import { UserRole } from './common/user.role';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
+import * as bcrypt from 'bcrypt';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -47,11 +48,18 @@ describe('UsersService', () => {
     });
 
     it('should create and return new user with valid data', async () => {
+      const mockedPasswordHash = await bcrypt.hash(dto.password, 10);
+
       const createQueryArguments = {
         username: dto.username,
         role: UserRole.User,
-        passwordHash: expect.anything(),
+        passwordHash: mockedPasswordHash,
       };
+
+      jest.spyOn(bcrypt, 'hash').mockImplementationOnce((password) => {
+        expect(password).toBe(dto.password);
+        return mockedPasswordHash;
+      });
 
       let result: User;
       repositoryMock.create.mockImplementationOnce((fields) => {

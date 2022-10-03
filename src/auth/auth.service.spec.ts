@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/user.entity';
 import { UserRole } from '../users/common/user.role';
+import * as bcrypt from 'bcrypt';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -33,7 +34,15 @@ describe('AuthService', () => {
       const user = new User(username, UserRole.User, passwordHash);
       userServiceMock.findOneByUsername.mockResolvedValueOnce(user);
 
-      expect(await service.validate(username, passwordHash)).toBe(user);
+      jest
+        .spyOn(bcrypt, 'compare')
+        .mockImplementationOnce((bcryptPassword, bcryptPasswordHash) => {
+          expect(bcryptPassword).toBe(passwordHash);
+          expect(bcryptPasswordHash).toBe(passwordHash);
+          return true;
+        });
+
+      expect(service.validate(username, passwordHash)).resolves.toBe(user);
       expect(userServiceMock.findOneByUsername).toBeCalledWith(username);
       expect(userServiceMock.findOneByUsername).toBeCalledTimes(1);
     });
