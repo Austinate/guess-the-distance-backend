@@ -5,13 +5,20 @@ import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JWT_SECRET } from 'src/common/constants';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
-    // TODO: inject JWT secret via ENV variables
-    JwtModule.register({ secret: 'test' }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        return { secret: configService.getOrThrow<string>(JWT_SECRET) };
+      },
+    }),
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   exports: [AuthService],
