@@ -1,5 +1,6 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
+import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/user.entity';
@@ -9,13 +10,16 @@ import * as bcrypt from 'bcrypt';
 describe('AuthService', () => {
   let service: AuthService;
   let userServiceMock: DeepMocked<UsersService>;
+  let jwtServiceMock: DeepMocked<JwtService>;
 
   beforeEach(async () => {
     userServiceMock = createMock<UsersService>();
+    jwtServiceMock = createMock<JwtService>();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
         { provide: UsersService, useValue: userServiceMock },
+        { provide: JwtService, useValue: jwtServiceMock },
       ],
     }).compile();
 
