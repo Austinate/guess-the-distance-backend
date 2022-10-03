@@ -11,12 +11,15 @@ import {
   Query,
   ParseUUIDPipe,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CitiesService } from './cities.service';
 import { CitiesDistanceDto } from './dto/cities-distance.dto';
 import { CreateCityDto } from './dto/create-city.dto';
 import { FindCityDto } from './dto/find-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
 
+@ApiBearerAuth('JWT')
+@ApiTags('cities')
 @Controller('cities')
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 export class CitiesController {

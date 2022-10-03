@@ -74,7 +74,7 @@ describe('CitiesService', () => {
         await service.findByName(query.limit, query.offset, query.name),
       ).toBe(result);
       expect(repositoryMock.find).toBeCalledWith(
-        { name: { $like: `${query.name}%` } },
+        { name: { $ilike: `${query.name}%` } },
         {
           limit: query.limit,
           offset: query.offset * query.limit,

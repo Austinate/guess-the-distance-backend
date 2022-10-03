@@ -12,27 +12,27 @@ import {
 export class City {
   @PrimaryKey({ type: 'uuid', defaultRaw: 'uuid_generate_v4()' })
   @IsUUID()
-  id: string;
+  readonly id: string;
 
   @Property()
   @IsNotEmpty()
-  name: string;
+  readonly name: string;
 
   @Property()
   @IsNotEmpty()
   @Length(3, 255)
-  country: string;
+  readonly country: string;
 
   @Property({ type: types.float })
   @IsLatitude()
-  latitude: number;
+  readonly latitude: number;
 
   @Property({ type: types.float })
   @IsLongitude()
-  longitude: number;
+  readonly longitude: number;
 
   @Property({ type: types.datetime, hidden: true })
-  createdAt = new Date();
+  readonly createdAt = new Date();
 
   @Property({
     type: types.datetime,
@@ -40,7 +40,7 @@ export class City {
     hidden: true,
     onUpdate: () => new Date(),
   })
-  updatedAt?: Date;
+  readonly updatedAt?: Date;
 
   constructor(
     name: string,
