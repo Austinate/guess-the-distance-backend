@@ -119,14 +119,14 @@
           "nullable": false,
           "mappedType": "string"
         },
-        "role": {
-          "name": "role",
-          "type": "jsonb",
+        "roles": {
+          "name": "roles",
+          "type": "text[]",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "json"
+          "mappedType": "array"
         },
         "created_at": {
           "name": "created_at",

@@ -12,6 +12,8 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../users/roles.decorator';
+import { UserRole } from '../users/user-role.enum';
 import { CitiesService } from './cities.service';
 import { CitiesDistanceDto } from './dto/cities-distance.dto';
 import { CreateCityDto } from './dto/create-city.dto';
@@ -26,6 +28,7 @@ export class CitiesController {
   constructor(private readonly citiesService: CitiesService) {}
 
   @Post()
+  @Roles(UserRole.Admin)
   create(@Body() createCityDto: CreateCityDto) {
     return this.citiesService.create(createCityDto);
   }
@@ -45,6 +48,7 @@ export class CitiesController {
     return this.citiesService.findOne(id);
   }
 
+  @Roles(UserRole.Admin)
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -53,6 +57,7 @@ export class CitiesController {
     return this.citiesService.update(id, updateCityDto);
   }
 
+  @Roles(UserRole.Admin)
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.citiesService.remove(+id);
