@@ -5,7 +5,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { v4 as uuid } from 'uuid';
-import { UserRole } from './common/user.role';
+import { UserRole } from './user-role.enum';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -39,7 +39,11 @@ describe('UsersService', () => {
     dto.password = 'password';
 
     it('should throw ConflictException if user already exists', async () => {
-      const existingUser = new User(dto.username, UserRole.User, dto.password);
+      const existingUser = new User(
+        dto.username,
+        [UserRole.User],
+        dto.password,
+      );
       repositoryMock.findOne.mockResolvedValueOnce(existingUser);
 
       expect(service.create(dto)).rejects.toThrowError(ConflictException);
@@ -52,7 +56,7 @@ describe('UsersService', () => {
 
       const createQueryArguments = {
         username: dto.username,
-        role: UserRole.User,
+        roles: [UserRole.User],
         passwordHash: mockedPasswordHash,
       };
 
@@ -63,7 +67,11 @@ describe('UsersService', () => {
 
       let result: User;
       repositoryMock.create.mockImplementationOnce((fields) => {
-        result = new User(fields.username, fields.role, fields.passwordHash);
+        result = new User(
+          fields.username,
+          [UserRole.User],
+          fields.passwordHash,
+        );
         expect(fields.passwordHash).not.toEqual(dto.password);
         return result;
       });
@@ -77,7 +85,7 @@ describe('UsersService', () => {
 
   describe('findOne', () => {
     it('should return a user if it exists', async () => {
-      const result = new User('test_user', UserRole.User, 'password');
+      const result = new User('test_user', [UserRole.User], 'password');
       repositoryMock.findOne.mockResolvedValueOnce(result);
       expect(await service.findOne({ id: result.id })).toBe(result);
       expect(repositoryMock.findOne).toBeCalledTimes(1);
@@ -95,7 +103,7 @@ describe('UsersService', () => {
 
   describe('findOneById', () => {
     it('should return a user if it exists', async () => {
-      const result = new User('test_user', UserRole.User, 'password');
+      const result = new User('test_user', [UserRole.User], 'password');
       repositoryMock.findOne.mockResolvedValueOnce(result);
       expect(await service.findOneById(result.id)).toBe(result);
       expect(repositoryMock.findOne).toBeCalledTimes(1);
@@ -113,7 +121,7 @@ describe('UsersService', () => {
 
   describe('findOneByUsername', () => {
     it('should return a user if it exists', async () => {
-      const result = new User('test_user', UserRole.User, 'password');
+      const result = new User('test_user', [UserRole.User], 'password');
       repositoryMock.findOne.mockResolvedValueOnce(result);
       expect(await service.findOneByUsername(result.username)).toBe(result);
       expect(repositoryMock.findOne).toBeCalledTimes(1);

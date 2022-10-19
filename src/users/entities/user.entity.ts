@@ -7,7 +7,7 @@ import {
   Unique,
 } from '@mikro-orm/core';
 import { IsUUID } from 'class-validator';
-import { UserRole } from '../common/user.role';
+import { UserRole } from '../user-role.enum';
 import { v4 as uuid } from 'uuid';
 
 @Entity()
@@ -23,9 +23,8 @@ export class User {
   @Property({ hidden: true })
   readonly passwordHash: string;
 
-  @Property({ hidden: true })
-  @Enum({ default: [UserRole.User] })
-  readonly role: UserRole;
+  @Enum({ type: types.enumArray, default: [UserRole.User], nullable: false })
+  readonly roles: UserRole[];
 
   @Property({ type: types.datetime, hidden: true })
   readonly createdAt = new Date();
@@ -38,10 +37,10 @@ export class User {
   })
   readonly updatedAt?: Date;
 
-  constructor(username: string, role: UserRole, passwordHash: string) {
+  constructor(username: string, roles: [UserRole], passwordHash: string) {
     this.id = uuid();
     this.username = username;
     this.passwordHash = passwordHash;
-    this.role = role;
+    this.roles = roles;
   }
 }

@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/user.entity';
-import { UserRole } from '../users/common/user.role';
+import { UserRole } from '../users/user-role.enum';
 import * as bcrypt from 'bcrypt';
 
 describe('AuthService', () => {
@@ -35,7 +35,7 @@ describe('AuthService', () => {
       const username = 'existing';
       const passwordHash = 'passwordHash';
 
-      const user = new User(username, UserRole.User, passwordHash);
+      const user = new User(username, [UserRole.User], passwordHash);
       userServiceMock.findOneByUsername.mockResolvedValueOnce(user);
 
       jest
@@ -54,7 +54,7 @@ describe('AuthService', () => {
     it('should return null if user credentials do not match', async () => {
       const username = 'existing';
 
-      const user = new User(username, UserRole.User, 'some_hash');
+      const user = new User(username, [UserRole.User], 'some_hash');
       userServiceMock.findOneByUsername.mockResolvedValueOnce(user);
 
       expect(await service.validate(username, 'password')).toBeNull();

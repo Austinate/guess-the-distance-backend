@@ -8,8 +8,8 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import { UserRole } from './common/user.role';
 import { FilterQuery } from '@mikro-orm/core';
+import { UserRole } from './user-role.enum';
 
 @Injectable()
 export class UsersService {
@@ -32,7 +32,7 @@ export class UsersService {
 
     const createdUser = await this.usersRepository.create({
       username: username,
-      role: UserRole.User,
+      roles: [UserRole.User],
       passwordHash: await bcrypt.hash(password, 10),
     });
     await this.usersRepository.persistAndFlush(createdUser);
